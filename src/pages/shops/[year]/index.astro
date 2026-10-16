@@ -1,0 +1,144 @@
+---
+import { getEmDashCollection } from "emdash";
+import { Image } from "emdash/ui";
+// import { resolveBlogSiteIdentity } from "../utils/site-identity";
+const { year } = Astro.params;
+const currentYear = String(year);
+
+// DB読み込み
+const [{ entries: shops , cacheHint }] = await Promise.all([
+	getEmDashCollection("shops", {
+		orderBy: { created_at: "asc" },
+        where: { year: currentYear },
+	})
+]);
+
+const prefNames: Record<number, string> = {
+	1: "北海道",
+	2: "青森県",
+	3: "岩手県",
+	4: "宮城県",
+	5: "秋田県",
+	6: "山形県",
+	7: "福島県"
+};
+
+//　グルーピング
+const groupedShops = shops.reduce((acc: any, shop: any) => {
+	const prefId = shop.data.prefecture_id;
+	if (!acc[prefId]) {
+		acc[prefId] = [];
+	}
+	acc[prefId].push(shop);
+	return acc;
+}, {} as Record<number, any>);
+
+// ない都道府県を除外
+const activePrefIds = Object.keys(groupedShops).map(Number).sort((a, b) => a - b);
+
+// キャッシュ
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World Page</title>
+        <style>
+        /* 画面全体の文字色を白ベースにして読みやすくします */
+        body {
+            color: #e2e8f0; /* 少し目に優しい明るいグレー */
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ffffff;
+            border-bottom: 2px solid #334155; /* 落ち着いたダークグレーの線 */
+            padding-bottom: 10px;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #334155;
+            margin: 20px 0;
+        }
+
+        .pref-section h2 {
+            color: #38bdf8; /* 都道府県名は見やすい鮮やかなライトブルーに */
+            border-left: 4px solid #38bdf8;
+            padding-left: 10px;
+            margin-top: 30px;
+        }
+
+        /* 綺麗に並べるための横並び（グリッド）CSS */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+            list-style: none;
+            padding: 0;
+        }
+
+        /* ★ここが一番のポイント！黒背景に映えるカードデザイン */
+        .shop-card {
+            border: 1px solid #334155; /* 高級感のあるシックな枠線 */
+            padding: 20px;
+            border-radius: 12px;
+            background: #1e293b; /* 深みのあるネイビーグレー（板チョコのような立体感） */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); /* 影をつけて浮き上がらせる */
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        /* マウスを乗せたときに少し浮き上がる Laravel風のモダンなエフェクト */
+        .shop-card:hover {
+            transform: translateY(-4px);
+            border-color: #38bdf8; /* ホバー時は枠線が青く光る */
+        }
+
+        .shop-card h3 {
+            color: #ffffff; /* 店名は真っ白でくっきり */
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+        }
+
+        .shop-card p {
+            color: #94a3b8; /* 詳細文は少しトーンを落としたグレーで上品に */
+            font-size: 0.9rem;
+            margin: 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hello World</h1>
+    {activePrefIds.length > 0 ? (
+        // 4. データがある都道府県だけをJISコード順にループ
+        activePrefIds.map((prefId) => (
+            <div class="pref-section">
+                {/* 5. 見出し（例:「北海道」）を表示。なければコード番号を表示 */}
+                <h2>{prefNames[prefId] || `都道府県コード: ${prefId}`}</h2>
+                
+                {/* 6. その都道府県のお店たちを横並び（グリッド）で一覧表示 */}
+                <ul class="shop-grid">
+                    {groupedShops[prefId].map((shop: { data: { name: string, detail: string , image: any }, slug: string }) => (
+                        <li class="shop-card">
+                            <a href={`/shops/${year}/${shop.slug}`} style="text-decoration: none; color: inherit; display: block; height: 100%;">
+                                {shop.data.image ? (
+                                    <Image image={shop.data.image} />
+                                ) : <img src="/_emdash/api/media/file/01M47D65RTFX1465XKASEPK4QD.01M47D65TEQN4C4H9JY3PNGCZY.png" alt="No image available" />}
+                                <h3>{shop.data.name}</h3>
+                                <p>{shop.data.detail || "詳細情報はありません。"}</p>
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        ))
+    ) : (
+        <p>登録されているお店はありません。</p>
+    )}
+</body>
+</html>

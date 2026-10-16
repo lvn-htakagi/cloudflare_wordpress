@@ -3,7 +3,13 @@
 
 /// <reference types="emdash/locals" />
 
-import type { BylineSummary, ContentBylineCredit, TaxonomyTerm, PortableTextBlock } from "emdash";
+import type {
+  BylineSummary,
+  ContentBylineCredit,
+  TaxonomyTerm,
+  PortableTextBlock,
+  ReferencePage,
+} from "emdash";
 
 export interface Page {
   id: string;
@@ -24,7 +30,38 @@ export interface Post {
   slug: string | null;
   status: string;
   title: string;
-  featured_image?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  featured_image?: {
+    id: string;
+    src?: string;
+    alt?: string;
+    width?: number;
+    height?: number;
+    filename?: string;
+    mimeType?: string;
+    blurhash?: string;
+    dominantColor?: string;
+    focalX?: number;
+    focalY?: number;
+    provider?: string;
+    previewUrl?: string;
+    meta?: Record<string, unknown>;
+    darkVariant?: {
+      id: string;
+      src?: string;
+      alt?: string;
+      width?: number;
+      height?: number;
+      filename?: string;
+      mimeType?: string;
+      blurhash?: string;
+      dominantColor?: string;
+      focalX?: number;
+      focalY?: number;
+      provider?: string;
+      previewUrl?: string;
+      meta?: Record<string, unknown>;
+    };
+  };
   content?: PortableTextBlock[];
   excerpt?: string;
   createdAt: Date;
@@ -35,9 +72,103 @@ export interface Post {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
+export interface Shop {
+  id: string;
+  slug: string | null;
+  status: string;
+  name: string;
+  prefecture_id: number;
+  detail?: string;
+  comment?: string;
+  image?: {
+    id: string;
+    src?: string;
+    alt?: string;
+    width?: number;
+    height?: number;
+    filename?: string;
+    mimeType?: string;
+    blurhash?: string;
+    dominantColor?: string;
+    focalX?: number;
+    focalY?: number;
+    provider?: string;
+    previewUrl?: string;
+    meta?: Record<string, unknown>;
+    darkVariant?: {
+      id: string;
+      src?: string;
+      alt?: string;
+      width?: number;
+      height?: number;
+      filename?: string;
+      mimeType?: string;
+      blurhash?: string;
+      dominantColor?: string;
+      focalX?: number;
+      focalY?: number;
+      provider?: string;
+      previewUrl?: string;
+      meta?: Record<string, unknown>;
+    };
+  };
+  introduction?: string;
+  interview?: string;
+  year: number;
+  company_name?: string;
+  address?: string;
+  tel?: string;
+  fax?: string;
+  url?: string;
+  capital?: string;
+  net_sales?: string;
+  business_content?: string;
+  license_number?: string;
+  employee?: string;
+  organizations?: string;
+  establishment?: string;
+  base?: string;
+  relationship?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
+export interface ShopHistory {
+  id: string;
+  slug: string | null;
+  status: string;
+  year: number;
+  month?: number;
+  detail: string;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
+export interface ShopReferences {
+  shop_histories: ReferencePage<ShopHistory>;
+}
+
+export interface ShopHistoryReferences {
+  shops: ReferencePage<Shop>;
+}
+
 declare module "emdash" {
   interface EmDashCollections {
     pages: Page;
     posts: Post;
+    shops: Shop;
+    shop_histories: ShopHistory;
+  }
+  interface EmDashCollectionReferences {
+    shops: ShopReferences;
+    shop_histories: ShopHistoryReferences;
   }
 }
