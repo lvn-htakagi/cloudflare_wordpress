@@ -4,6 +4,7 @@ import { Image } from "emdash/ui";
 // import { resolveBlogSiteIdentity } from "../utils/site-identity";
 const { year } = Astro.params;
 const currentYear = String(year);
+const testMessage = import.meta.env.PUBLIC_TEST_VAR;
 
 // DB読み込み
 const [{ entries: shops , cacheHint }] = await Promise.all([
@@ -113,7 +114,7 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+    <h1>{testMessage}</h1>
     {activePrefIds.length > 0 ? (
         // 4. データがある都道府県だけをJISコード順にループ
         activePrefIds.map((prefId) => (
