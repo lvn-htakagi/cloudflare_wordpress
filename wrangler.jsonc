@@ -16,6 +16,12 @@
       "bucket_name": "my-emdash-media",
     },
   ],
+  "kv_namespaces": [
+    {
+      "binding": "SESSION",
+      "id": "493417c862f943f5a772f6e8c822ba09",
+    },
+  ],
   // Sandboxed plugins require Worker Loader, available on Workers paid plans.
   // General maintenance cron trigger
   "triggers": {
