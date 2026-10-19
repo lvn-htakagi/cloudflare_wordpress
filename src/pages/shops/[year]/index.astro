@@ -46,7 +46,7 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 <head>
     <meta charset="UTF-8">
     <title>Hello World Page</title>
-        <style>
+    <style>
         /* 画面全体の文字色を白ベースにして読みやすくします */
         body {
             color: #e2e8f0; /* 少し目に優しい明るいグレー */
@@ -112,6 +112,18 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
             line-height: 1.5;
         }
     </style>
+    <script is:inline>
+        (function () {
+            var row = document.cookie.split("; ").find(function (item) {
+                return item.startsWith("theme=");
+            });
+            var theme = row ? row.slice(6) : null;
+            console.log("Detected theme:", theme);
+            // if (theme === "dark" || theme === "light") {
+                document.documentElement.classList.add("dark");
+            // }
+        })();
+    </script>
 </head>
 <body>
     <h1>{testMessage}</h1>
