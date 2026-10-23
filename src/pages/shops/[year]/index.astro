@@ -2,6 +2,8 @@
 import { getEmDashCollection } from "emdash";
 import { Image } from "emdash/ui";
 import { env } from "cloudflare:workers";
+import "../../../styles/tokens.css";
+import "../../../styles/theme.css";
 // import { resolveBlogSiteIdentity } from "../utils/site-identity";
 const { year } = Astro.params;
 const currentYear = String(year);
@@ -49,7 +51,6 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
     <meta charset="UTF-8">
     <title>Hello World Page</title>
     <style>
-        /* 画面全体の文字色を白ベースにして読みやすくします */
         body {
             color: #e2e8f0; /* 少し目に優しい明るいグレー */
             font-family: sans-serif;
