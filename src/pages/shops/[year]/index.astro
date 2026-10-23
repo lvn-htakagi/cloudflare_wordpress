@@ -66,6 +66,12 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
             margin: 20px 0;
         }
 
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
         .pref-section h2 {
             color: #38bdf8; /* 都道府県名は見やすい鮮やかなライトブルーに */
             border-left: 4px solid #38bdf8;
@@ -126,7 +132,7 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
     </script>
 </head>
 <body>
-    <h1>{testMessage}</h1>
+    <h1>{testMessage ?? "undefined です"}</h1>
     {activePrefIds.length > 0 ? (
         // 4. データがある都道府県だけをJISコード順にループ
         activePrefIds.map((prefId) => (
