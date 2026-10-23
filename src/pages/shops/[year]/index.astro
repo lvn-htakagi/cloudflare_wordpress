@@ -1,10 +1,11 @@
 ---
 import { getEmDashCollection } from "emdash";
 import { Image } from "emdash/ui";
+import { env } from "cloudflare:workers";
 // import { resolveBlogSiteIdentity } from "../utils/site-identity";
 const { year } = Astro.params;
 const currentYear = String(year);
-const testMessage = import.meta.env.PUBLIC_TEST_VAR;
+const testMessage = env.PUBLIC_TEST_VAR;
 
 // DB読み込み
 const [{ entries: shops , cacheHint }] = await Promise.all([
