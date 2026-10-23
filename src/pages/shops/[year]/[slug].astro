@@ -1,6 +1,7 @@
 ---
 import { getEmDashEntry } from "emdash";
 import { Image } from "emdash/ui"
+import { env } from "cloudflare:workers";
 
 const { year, slug } = Astro.params;
 
@@ -10,7 +11,7 @@ const { entry: shop } = await getEmDashEntry("shops", slug as string, {
 	}
 });
 
-console.log(shop);
+const noImageUrl = env.NO_IMAGE_URL;
 if (!shop) {
     return Astro.redirect("/404");
 }
@@ -225,7 +226,7 @@ if (!shop) {
                 alt={shop.data.name}
                 style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; margin-bottom: 20px;"
             />
-        ) : <img src="/_emdash/api/media/file/01M47D65RTFX1465XKASEPK4QD.01M47D65TEQN4C4H9JY3PNGCZY.png" alt="No image available" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; margin-bottom: 20px;" />} 
+        ) : <img src={noImageUrl} alt="No image available" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; margin-bottom: 20px;" />} 
 
         <h1>{shop.data.name}</h1>
         {shop.data.introduction &&(
