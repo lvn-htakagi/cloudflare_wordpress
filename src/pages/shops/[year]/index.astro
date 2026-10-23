@@ -6,6 +6,7 @@ import { env } from "cloudflare:workers";
 const { year } = Astro.params;
 const currentYear = String(year);
 const testMessage = env.PUBLIC_TEST_VAR;
+const noImageUrl = env.NO_IMAGE_URL;
 
 // DB読み込み
 const [{ entries: shops , cacheHint }] = await Promise.all([
@@ -148,7 +149,7 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
                             <a href={`/shops/${year}/${shop.slug}`} style="text-decoration: none; color: inherit; display: block; height: 100%;">
                                 {shop.data.image ? (
                                     <Image image={shop.data.image} />
-                                ) : <img src="/_emdash/api/media/file/01M47D65RTFX1465XKASEPK4QD.01M47D65TEQN4C4H9JY3PNGCZY.png" alt="No image available" />}
+                                ) : <img src={noImageUrl} alt="No image available" />}
                                 <h3>{shop.data.name}</h3>
                                 <p>{shop.data.detail || "詳細情報はありません。"}</p>
                             </a>
