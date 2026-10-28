@@ -1,0 +1,92 @@
+---
+import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from "emdash/ui";
+import { getMenuWithCacheHint, getSiteSettingsWithCacheHint } from "emdash";
+import { createPublicPageContext } from "emdash/page";
+import { resolveBlogSiteIdentity } from "../utils/site-identity";
+import "../styles/tokens.css";
+import "../styles/theme.css";
+
+interface Props {
+	title: string;
+	pageTitle?: string | null;
+	description?: string | null;
+	image?: string | null;
+	canonical?: string | null;
+	robots?: string | null;
+	type?: "website" | "article";
+	publishedTime?: string | null;
+	modifiedTime?: string | null;
+	author?: string | null;
+	/** Pass content reference for plugin page contributions on content pages */
+	content?: { collection: string; id: string; slug?: string | null };
+}
+
+const {
+	title,
+	pageTitle,
+	description,
+	image,
+	canonical,
+	robots,
+	type = "website",
+	publishedTime,
+	modifiedTime,
+	author,
+	content,
+} = Astro.props;
+
+const [settingsResult, menuResult] = await Promise.all([
+	getSiteSettingsWithCacheHint(),
+	getMenuWithCacheHint("primary"),
+]);
+
+const { siteTitle, siteTagline, siteLogo } = resolveBlogSiteIdentity(
+	settingsResult.data,
+);
+
+const titleIncludesSiteName =
+	title === siteTitle ||
+	title.endsWith(` | ${siteTitle}`) ||
+	title.endsWith(` — ${siteTitle}`);
+const fullTitle = titleIncludesSiteName ? title : `${title} — ${siteTitle}`;
+
+const pageCtx = createPublicPageContext({
+	Astro,
+	kind: content ? "content" : "custom",
+	pageType: type,
+	title: fullTitle,
+	pageTitle: pageTitle ?? title,
+	description,
+	canonical,
+	image,
+	content,
+	seo: { ogImage: image, robots },
+	articleMeta: { publishedTime, modifiedTime, author },
+	siteName: siteTitle,
+});
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <EmDashHead page={pageCtx} />
+    <meta charset="UTF-8">
+    <title>{fullTitle}</title>
+    <script is:inline>
+        (function () {
+            var row = document.cookie.split("; ").find(function (item) {
+                return item.startsWith("theme=");
+            });
+            var theme = row ? row.slice(6) : null;
+            // if (theme === "dark" || theme === "light") {
+                document.documentElement.classList.add(theme);
+            // }
+        })();
+    </script>
+</head>
+<body>
+    <EmDashBodyStart  page={pageCtx} />
+    <slot />
+    <EmDashBodyEnd page={pageCtx} />
+</body>
+</html>
