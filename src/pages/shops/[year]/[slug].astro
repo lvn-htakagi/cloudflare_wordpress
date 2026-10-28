@@ -13,114 +13,207 @@ const { entry: shop } = await getEmDashEntry("shops", slug as string, {
 	}
 });
 
+const prefNames: Record<number, string> = {
+    1: "北海道",
+    2: "青森県",
+    3: "岩手県",
+    4: "宮城県",
+    5: "秋田県",
+    6: "山形県",
+    7: "福島県"
+};
+
 const noImageUrl = env.NO_IMAGE_URL;
 if (!shop) {
     return Astro.redirect("/404");
 }
 ---
 
-<Shop title={shop.data.name}>
-    {/* 一覧ページ（index.astro）に戻るリンク */}
-    <a href={`/shops/${year}`} class="back-link">← {year}年の一覧に戻る</a>
+<Shop title={`${shop.data.name}の企業情報`}>
+    <link
+        slot="headCss"
+        rel="stylesheet"
+        href="/css/detail.css"
+    />
+    <div class="contentsInner">
+        <section>
+            <div id="corpInfo">
+                <h2>
+                    <img
+                        src="/images/laurel.png"
+                        alt="ベスト不動産カンパニー"
+                    />
+                    <span>{prefNames[Number(shop.data.prefecture_id)] || ""}</span>
+                </h2>
 
-    <div class="shop-container">
-        {shop.data.image ? (
-            <Image 
-                image={shop.data.image} 
-                alt={shop.data.name}
-                style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; margin-bottom: 20px;"
-            />
-        ) : <img src={noImageUrl} alt="No image available" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; margin-bottom: 20px;" />} 
+                <div id="corpLogo">
+                    <Image
+                        image={shop.data.image}
+                        alt={shop.data.company_name || shop.data.name}
+                    />
+                </div>
+            </div>
 
-        <h1>{shop.data.name}</h1>
-        {shop.data.introduction &&(
-            <>
-                <h2 class="comment-title">企業紹介</h2>
-                <p class="comment-box detail-text">{shop.data.introduction}</p>
-            </>
-        )}
+            <div id="presidentDiv">
+                <div id="profileSection">
+                    <div id="presidentPh">
+                        <Image
+                            image={shop.data.face}
+                        />
+                    </div>
+                    <div id="profile">
+                        <p id="presidentName">{shop.data.president}</p>
+                        <div id="biography">
+                            <p>【略歴】</p>
+                            <pre>{shop.data.career}</pre>
+                        </div>
+                    </div>
+                </div>
+                {shop.data.introduction && (
+                    <div id="corpIntroduction">
+                        <p>企業紹介</p>
+                        <pre>{shop.data.introduction}</pre>
+                    </div>
+                )}
+
+                {shop.data.interview && (
+                    <div id="interview">
+                        <p>インタビュー</p>
+                        <pre>{shop.data.interview}</pre>
+                    </div>
+                )}
+            </div>
+        </section>
+
+        {/* 企業概要 */}
+        <section id="overview">
+            <p>企業概要</p>
+
+            <dl>
+                <dt>会社名</dt>
+                <dd>{shop.data.company_name || shop.data.name}</dd>
+
+                <dt>所在地</dt>
+                <dd>{shop.data.address}</dd>
+
+                <dt>電話番号</dt>
+                <dd>{shop.data.tel}</dd>
+
+                <dt>FAX番号</dt>
+                <dd>{shop.data.fax}</dd>
+
+                <dt>URL</dt>
+                <dd>
+                    {shop.data.url && (
+                        <a
+                            href={shop.data.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {shop.data.url}
+                        </a>
+                    )}
+                </dd>
+
+                <dt>資本金</dt>
+                <dd>{shop.data.capital}</dd>
+
+                <dt>売上高</dt>
+                <dd><pre>{shop.data.net_sales}</pre></dd>
+
+                <dt>事業内容</dt>
+                <dd><pre>{shop.data.business_content}</pre></dd>
+
+                <dt>許認可・免許番号</dt>
+                <dd><pre>{shop.data.license_number}</pre></dd>
+
+                <dt>従業員数</dt>
+                <dd>{shop.data.employee}</dd>
+
+                <dt>加盟団体</dt>
+                <dd><pre>{shop.data.organizations}</pre></dd>
+
+                <dt>設立年月</dt>
+                <dd>{shop.data.establishment}</dd>
+
+                <dt>拠点</dt>
+                <dd><pre>{shop.data.base}</pre></dd>
+
+                <dt>関係会社</dt>
+                <dd><pre>{shop.data.relationship}</pre></dd>
+            </dl>
+        </section>
+
+        {/* 沿革 */}
         {shop.references?.shop_histories?.entries && shop.references.shop_histories.entries.length > 0 && (
-            <>
-                <h2 class="comment-title">お店の歴史</h2>
-                <ul class="timeline">
-                    {/* shop_histories のまま、中で年(year)・月(month)の並び替えを実行 */}
-                    {shop.references.shop_histories.entries
+            <section id="history">
+                <p>沿革</p>
+
+                <dl>
+                    {[...shop.references.shop_histories.entries]
                         .sort((a: any, b: any) => {
-                            // 第1条件：年（year）で比較（古い順）
-                            const yearDiff = Number(a.data?.year || 0) - Number(b.data?.year || 0);
+                            const yearDiff =
+                                Number(a.data?.year || 0) -
+                                Number(b.data?.year || 0);
+
                             if (yearDiff !== 0) return yearDiff;
-                            // 第2条件：月（month）で比較（同じ年なら月の古い順）
-                            return Number(a.data?.month || 0) - Number(b.data?.month || 0);
+
+                            return (
+                                Number(a.data?.month || 0) -
+                                Number(b.data?.month || 0)
+                            );
                         })
                         .map((history: any) => (
-                            <li class="timeline-item">
-                                {/* 年月を表示（管理画面に月があれば月も自動表示） */}
-                                <span class="timeline-year">
+                            <>
+                                <dt>
                                     {history.data?.year}年
-                                    {history.data?.month && `${history.data.month}月`}
-                                </span>
-                                {/* 出来事の本文（detail） */}
-                                <p class="timeline-event">{history.data?.detail}</p>
-                            </li>
-                        ))
-                    }
-                </ul>
-            </>
+                                    {history.data?.month
+                                        ? `${history.data.month}月`
+                                        : ""}
+                                </dt>
+                                <dd>
+                                    <pre>{history.data?.detail}</pre>
+                                </dd>
+                            </>
+                        ))}
+                </dl>
+            </section>
         )}
 
-        <>
-            <h2 class="comment-title">会社概要</h2>
-            
-            <table class="company-table">
-                <tbody>
-                    <tr>
-                        <th>会社名</th>
-                        <td>{shop.data.company_name}</td>
-                    </tr>
-                    <tr>
-                        <th>所在地</th>
-                        <td>{shop.data.address}</td>
-                    </tr>
-                    <tr>
-                        <th>電話番号</th>
-                        <td>{shop.data.tel}</td>
-                    </tr>
-                    <tr>
-                        <th>FAX番号</th>
-                        <td>{shop.data.fax}</td>
-                    </tr>
-                    <tr>
-                        <th>url</th>
-                        <td>{shop.data.url}</td>
-                    </tr>
-                    <tr>
-                        <th>資本金</th>
-                        <td>{shop.data.capital}</td>
-                    </tr>
-                    <tr>
-                        <th>売上高</th>
-                        <td>{shop.data.net_sales}</td>
-                    </tr>
-                    <tr>
-                        <th>事業内容</th>
-                        <td>{shop.data.business_content}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </>
-
-
-        {shop.data.interview &&(
-            <>
-                <h2 class="comment-title">インタビュー</h2>
-                <p class="comment-box detail-text">{shop.data.interview}</p>
-            </>
+        {/* 編集部コメント */}
+        {shop.data.comment && (
+            <section id="editorialComment">
+                <p id="editorTitle">
+                    <img
+                        src="/images/pen.svg"
+                        alt="編集部コメント"
+                    />
+                    編集部コメント
+                </p>
+                <pre>{shop.data.comment}</pre>
+            </section>
         )}
-        {shop.data.comment &&(
-            <>
-                <h2 class="comment-title">編集部コメント</h2>
-                <p class="comment-box detail-text">{shop.data.comment}</p>
-            </>
-        )}
+
+        {/* お問い合わせ */}
+        <section id="inquiryBtn">
+            <a
+                href={`https://www.lvnmatch.com/shop/form?detail_urls%5B%5D=${encodeURIComponent(Astro.url.href)}`}
+            >
+                <img
+                    src="/images/inquiryBtn.png"
+                    width="404"
+                    height="70"
+                    alt="この会社に問い合わせる"
+                />
+            </a>
+        </section>
+    </div>
+
+    <div id="breadcrumbBottom" class="sp">
+        <a href="/">
+            ベスト不動産カンパニー
+        </a>
+        &nbsp;&gt;&nbsp;
+        {shop.data.company_name || shop.data.name}
     </div>
 </Shop>
