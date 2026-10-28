@@ -1,0 +1,88 @@
+---
+const { year , slug } = Astro.params;
+const currentYear = new Date().getFullYear();
+const isCurrentYear = Number(year) === currentYear;
+const showYear = !isCurrentYear;
+const isDetailPage = slug !== undefined;
+---
+
+<div id="headContents">
+    <h1 id="siteLogo">
+        <a href="#">
+            <img src="/images/logoHeader.png" alt="" />
+        </a>
+        <span class="year-number">{showYear ? year : ""}</span>
+    </h1>
+
+    {isDetailPage ? (
+        <div class="navigation">
+            <ul>
+                <li>
+                    <a class="mincho current" href="#">
+                        ベスト不動産<br class="sp" />カンパニー
+                    </a>
+                </li>
+                <li>
+                    <a class="mincho" href="#">
+                        審査基準に<br class="sp" />ついて
+                    </a>
+                </li>
+            </ul>
+        </div>
+    ) : isCurrentYear ? (
+        <>
+            <div class="navigation">
+                <ul>
+                    <li>
+                        <a class="mincho current" href="#">
+                            ベスト不動産<br class="sp" />カンパニー
+                        </a>
+                    </li>
+                    <li>
+                        <a class="mincho" href="#">
+                            審査基準に<br class="sp" />ついて
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="mainV">
+                <img
+                    class="pc"
+                    src={`/images/best/mainV_${currentYear}_pc.jpg`}
+                    alt="ベスト不動産カンパニーとは"
+                />
+                <img
+                    class="sp"
+                    src={`/images/best/mainV_${currentYear}_sp.jpg`}
+                    alt="ベスト不動産カンパニー認定マーク"
+                />
+            </div>
+
+            <div id="about" class="sp">
+                <p class="mincho">ベスト不動産カンパニーとは</p>
+                <p class="mincho">
+                    ベスト不動産カンパニーとは、厳正な審査のもとリビンマッチが認定する地域を代表する不動産会社です。
+                    <br />
+                    経営者の資質、地域における確固たる実績、挑戦と成長などの審査を経て、各都道府県において最大3社まで認定されます。
+                </p>
+            </div>
+        </>
+    ) : (
+        <div id="mainV_past">
+            <img
+                class="pc"
+                src="/images/best/mainV_pastpage_pc.jpg"
+                alt="ベスト不動産カンパニー一覧"
+            />
+            <img
+                class="sp"
+                src="/images/best/mainV_pastpage_sp.jpg"
+                alt="ベスト不動産カンパニー一覧"
+            />
+            <p id="pastTtl" class="mincho">
+                {year}年ベスト不動産カンパニー一覧
+            </p>
+        </div>
+    )}
+</div>
