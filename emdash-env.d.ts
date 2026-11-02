@@ -3,7 +3,7 @@
 
 /// <reference types="emdash/locals" />
 
-import type { BylineSummary, ContentBylineCredit, TaxonomyTerm, PortableTextBlock, ReferencePage } from "emdash";
+import type { BylineSummary, ContentBylineCredit, TaxonomyTerm, PortableTextBlock } from "emdash";
 
 export interface Page {
   id: string;
@@ -47,7 +47,6 @@ export interface Shop {
   comment?: string;
   image?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
   introduction?: string;
-  interview?: string;
   year: number;
   company_name?: string;
   address?: string;
@@ -63,35 +62,15 @@ export interface Shop {
   establishment?: string;
   base?: string;
   relationship?: string;
+  histories?: { "year"?: number | null; "month"?: number | null; "detail"?: string | null }[];
+  gallery?: { "media"?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } } | null }[];
+  interviews?: { "question"?: string | null; "answer": string }[];
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
   byline?: BylineSummary | null;
   bylines?: ContentBylineCredit[];
   terms?: Record<string, TaxonomyTerm[]>;
-}
-
-export interface ShopHistory {
-  id: string;
-  slug: string | null;
-  status: string;
-  year: number;
-  month?: number;
-  detail: string;
-  createdAt: Date;
-  updatedAt: Date;
-  publishedAt: Date | null;
-  byline?: BylineSummary | null;
-  bylines?: ContentBylineCredit[];
-  terms?: Record<string, TaxonomyTerm[]>;
-}
-
-export interface ShopReferences {
-  shop_histories: ReferencePage<ShopHistory>;
-}
-
-export interface ShopHistoryReferences {
-  shops: ReferencePage<Shop>;
 }
 
 declare module "emdash" {
@@ -99,10 +78,5 @@ declare module "emdash" {
     pages: Page;
     posts: Post;
     shops: Shop;
-    shop_histories: ShopHistory;
-  }
-  interface EmDashCollectionReferences {
-    shops: ShopReferences;
-    shop_histories: ShopHistoryReferences;
   }
 }

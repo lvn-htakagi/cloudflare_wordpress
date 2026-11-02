@@ -6,6 +6,24 @@ const showYear = !isCurrentYear;
 const isDetailPage = slug !== undefined;
 ---
 
+<header class="pc">
+    <div id="breadcrumb">
+        <a href="https://www.lvnmatch.com/" rel="nofollow">不動産の比較サイト リビンマッチ</a>
+        &nbsp;&gt;&nbsp;ベスト不動産カンパニー
+    </div>
+
+    <div id="headMothers">
+        <img
+            src={'/images/tosyoLogo.png'}
+            height="48"
+            alt="リビン・テクノロジーズ株式会社（東証グロース上場）が運営するサービスです。証券コード：4445"
+        >
+        リビン・テクノロジーズ株式会社（東証グロース上場）が運営するサービスです。
+        <br>
+        証券コード：4445
+    </div>
+</header>
+
 <div id="headContents">
     <h1 id="siteLogo">
         <a href="#">
@@ -18,7 +36,7 @@ const isDetailPage = slug !== undefined;
         <div class="navigation">
             <ul>
                 <li>
-                    <a class="mincho current" href="#">
+                    <a class="mincho" href="#">
                         ベスト不動産<br class="sp" />カンパニー
                     </a>
                 </li>
@@ -34,7 +52,7 @@ const isDetailPage = slug !== undefined;
             <div class="navigation">
                 <ul>
                     <li>
-                        <a class="mincho current" href="#">
+                        <a class="mincho" href="#">
                             ベスト不動産<br class="sp" />カンパニー
                         </a>
                     </li>

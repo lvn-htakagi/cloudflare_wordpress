@@ -23,18 +23,25 @@ const prefNames: Record<number, string> = {
     7: "福島県"
 };
 
-const noImageUrl = env.NO_IMAGE_URL;
 if (!shop) {
     return Astro.redirect("/404");
 }
 ---
 
-<Shop title={`${shop.data.name}の企業情報`}>
+<Shop title={`${shop.data.name}`}>
     <link
         slot="headCss"
         rel="stylesheet"
         href="/css/detail.css"
     />
+    <script
+        is:inline
+        src="https://code.jquery.com/jquery-3.7.1.min.js"
+    ></script>
+    <script
+        is:inline
+        src="/js/fadeIn.js"
+    ></script>
     <div class="contentsInner">
         <section>
             <div id="corpInfo">
@@ -75,11 +82,15 @@ if (!shop) {
                         <pre>{shop.data.introduction}</pre>
                     </div>
                 )}
-
-                {shop.data.interview && (
+                {shop.data.interviews && shop.data.interviews.length > 0 && (
                     <div id="interview">
                         <p>インタビュー</p>
-                        <pre>{shop.data.interview}</pre>
+                        <dl>
+                            {shop.data.interviews.map((interview: any) => (
+                                <dt>{interview['question']}</dt>
+                                <dd><pre>{interview['answer']}</pre></dd>
+                            ))}
+                        </dl>
                     </div>
                 )}
             </div>
@@ -145,38 +156,43 @@ if (!shop) {
         </section>
 
         {/* 沿革 */}
-        {shop.references?.shop_histories?.entries && shop.references.shop_histories.entries.length > 0 && (
+        {shop.data.histories && shop.data.histories.length > 0 && (
             <section id="history">
                 <p>沿革</p>
-
                 <dl>
-                    {[...shop.references.shop_histories.entries]
-                        .sort((a: any, b: any) => {
-                            const yearDiff =
-                                Number(a.data?.year || 0) -
-                                Number(b.data?.year || 0);
-
-                            if (yearDiff !== 0) return yearDiff;
-
-                            return (
-                                Number(a.data?.month || 0) -
-                                Number(b.data?.month || 0)
-                            );
-                        })
-                        .map((history: any) => (
-                            <>
-                                <dt>
-                                    {history.data?.year}年
-                                    {history.data?.month
-                                        ? `${history.data.month}月`
-                                        : ""}
-                                </dt>
-                                <dd>
-                                    <pre>{history.data?.detail}</pre>
-                                </dd>
-                            </>
-                        ))}
+                    {shop.data.histories.map((image: any) => (
+                        <>
+                            <dt>
+                                {image.year}年
+                                {image.month
+                                    ? `${image.month}月`
+                                    : ""}
+                            </dt>
+                            <dd>
+                                <pre>{image.detail}</pre>
+                            </dd>
+                        </>
+                    ))}
                 </dl>
+            </section>
+        )}
+
+        {/* フォトギャラリー */}
+        {shop.data.gallery && shop.data.gallery.length > 0 && (
+            <section id="gallery">
+                <p>フォトギャラリー</p>
+
+                <ul class="fadein">
+                    {shop.data.gallery.map((image: any) => (
+                        <li>
+                            <Image
+                                image={image.media}
+                                alt={image.media.alt}
+                            />
+                            <span class="photoDdesc">{image.media.alt}</span>
+                        </li>
+                    ))}
+                </ul>
             </section>
         )}
 
