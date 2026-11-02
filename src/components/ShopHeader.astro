@@ -4,6 +4,7 @@ const currentYear = new Date().getFullYear();
 const isCurrentYear = Number(year) === currentYear;
 const showYear = !isCurrentYear;
 const isDetailPage = slug !== undefined;
+const judgePage = slug === undefined && Astro.url.href.includes("judge");
 ---
 
 <header class="pc">
@@ -32,7 +33,7 @@ const isDetailPage = slug !== undefined;
         <span class="year-number">{showYear ? year : ""}</span>
     </h1>
 
-    {isDetailPage ? (
+    {isDetailPage || judgePage ? (
         <div class="navigation">
             <ul>
                 <li>
